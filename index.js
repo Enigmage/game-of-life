@@ -8,7 +8,7 @@ const s = p => {
   p.setup = () => {
     dim = 40;
     let myCanvas = p.createCanvas(800, 400);
-    p.frameRate(10);
+    p.frameRate(5);
     myCanvas.parent("my-canvas");
     p.background("#bbb");
 
