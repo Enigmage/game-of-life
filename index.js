@@ -27,7 +27,7 @@ const s = p => {
         if (board[i][j] === 1) p.fill("#99ff66");
         else p.fill("#333300");
         p.stroke(0);
-        p.rect(i * dim, j * dim, dim - 2, dim - 2);
+        p.rect(i * dim, j * dim, dim - 1, dim - 1);
       }
     }
   };
