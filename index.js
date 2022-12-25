@@ -1,8 +1,13 @@
 const s = p => {
-  let dim, rows, cols, board, start;
+  let dim, rows, cols, board, nextBoard, start;
+  const create2DArray = (rows, cols) => {
+    let arr = new Array(cols);
+    for (let i = 0; i < cols; i++) arr[i] = new Array(rows);
+    return arr;
+  };
   p.setup = () => {
     dim = 40;
-    let myCanvas = p.createCanvas(1600, 800);
+    let myCanvas = p.createCanvas(800, 400);
     p.frameRate(10);
     myCanvas.parent("my-canvas");
     p.background("#bbb");
@@ -10,10 +15,8 @@ const s = p => {
     rows = p.floor(p.height / dim);
     cols = p.floor(p.width / dim);
 
-    board = new Array(cols);
-    for (let i = 0; i < cols; i++) {
-      board[i] = new Array(rows);
-    }
+    board = create2DArray(rows, cols);
+    nextBoard = create2DArray(rows, cols);
     start = false;
     init();
   };
@@ -24,16 +27,15 @@ const s = p => {
         if (board[i][j] === 1) p.fill("#99ff66");
         else p.fill("#333300");
         p.stroke(0);
-        p.rect(i * dim, j * dim, dim - 1, dim - 1);
+        p.rect(i * dim, j * dim, dim - 2, dim - 2);
       }
     }
   };
   const init = () => {
     for (let i = 0; i < cols; i++) {
       for (let j = 0; j < rows; j++) {
-        if (i === 0 || j === 0 || i === cols - 1 || j === rows - 1)
-          board[i][j] = 1;
-        else board[i][j] = 0;
+        board[i][j] = p.floor(p.random(2));
+        nextBoard[i][j] = 0;
       }
     }
   };
@@ -43,12 +45,18 @@ const s = p => {
         let aliveNeighbours = findAliveNeighbours(r, c);
         let alive = board[c][r];
         if (alive) {
-          if (aliveNeighbours <= 1 || aliveNeighbours > 3) board[c][r] = 0;
+          if (aliveNeighbours <= 1 || aliveNeighbours > 3) nextBoard[c][r] = 0;
+          else nextBoard[c][r] = board[c][r];
         } else {
-          if (aliveNeighbours === 3) board[c][r] = 1;
+          if (aliveNeighbours === 3) nextBoard[c][r] = 1;
+          else nextBoard[c][r] = board[c][r];
         }
       }
     }
+    // without swapping board and next board will ref same set of objects.
+    let t = board;
+    board = nextBoard;
+    nextBoard = t;
   };
 
   const findAliveNeighbours = (r, c) => {
